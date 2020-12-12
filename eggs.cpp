@@ -27,3 +27,34 @@ int powin( int a, int b){
  }
  return otv;
 }
+
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	int n,H,otv;
+
+	do{
+		std::cout << "Введите кол-во яиц :";
+		std::cin >> n;
+	}
+	while(n<1);
+
+	do{
+		std::cout << "Введите кол-во этажей :";
+		std::cin >> H;
+	}
+	while(H<1);
+
+	int nE = powof(2,H);
+
+	if (n==1)   otv = H;
+	if (n==2)   otv = search2(H);
+	if (n>2 && n<nE) otv = search2(H/powin(2,n-2))+(n-2);
+	if (n>=nE)  otv = nE;
+
+	std::cout <<"Минимальное необходимое кол-во попыток :"<<otv << std::endl;
+	system("pause");
+
+    return 0;
+}
