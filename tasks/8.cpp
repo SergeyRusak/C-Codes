@@ -43,6 +43,7 @@ void simulate(int a[], int height_modify, int end_sim_time, int task_number) {
         std::cout << m[24] << std::endl;
         if (!any_changes || min >= end_sim_time) break;
         any_changes = false;
+        prev_modify = 0;
     }
 
     if (!any_changes) {
