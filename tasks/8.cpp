@@ -1,3 +1,6 @@
+// ConsoleApplication1.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+
 #include <iostream>
 #include <locale.h>
 #include <string>
@@ -36,6 +39,7 @@ void simulate(int a[], int height_modify, int end_sim_time, int task_number) {
                 }
             std::cout << m[i] << " ";
         }
+        m[23] = (m[23] + prev_modify < 0) ? (0) : (m[23] + prev_modify);
         std::cout << m[24] << std::endl;
         if (!any_changes || min >= end_sim_time) break;
     }
@@ -72,4 +76,5 @@ int main()
 
 
     system("pause");
-    } 
+    }  
+      
