@@ -1,22 +1,22 @@
 #include <iostream>
 #include <locale.h>
+#include <climits>
 
-
-long long* Fib(int n, int *last) {
+long long* Fib(int &n) {
     long long* a = new long long[n];
     a[0] = a[1] = 1;
     for (int i = 2; i < n; i++)
     {
-        if (a[i - 1]  < INT_MAX - a[i - 2]) {
+        if (a[i - 1] < INT_MAX - a[i - 2]) {
             a[i] = a[i - 1] + a[i - 2];
-      
+
         }
         else
         {
-            *last = i;
+            n = -i;
             break;
         }
-        *last = -1;
+        
 
     }
 
@@ -35,19 +35,19 @@ int main()
     std::cout << "Введите количество чисел :";
     std::cin >> FIB_COUNT;
 
-    
+
     int last_num = 0;
-    long long* fib_arr = Fib(FIB_COUNT, &last_num);
+    long long* fib_arr = Fib(FIB_COUNT);
 
-
-    for (int i = 0; i < FIB_COUNT; i++)
+    if (FIB_COUNT < 0) {
+        std::cout << "Числа не помещаются в выделенную память. Последний номер числа:" << -FIB_COUNT;
+    }
+    else
     {
-        if (last_num > -1) {
-            std::cout << "Числа не помещаются в выделенную память. Последний номер числа:"<<last_num;
-
-            break;
+        for (int i = 0; i < FIB_COUNT; i++)
+        {
+            std::cout << fib_arr[i] << " ";
         }
-        std::cout << fib_arr[i] << " ";
     }
 
 }
