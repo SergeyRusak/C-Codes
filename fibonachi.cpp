@@ -7,7 +7,7 @@ long long* Fib(int n, int *last) {
     a[0] = a[1] = 1;
     for (int i = 2; i < n; i++)
     {
-        if (a[i - 1] + a[i - 2] < INT_MAX) {
+        if (a[i - 1]  < INT_MAX - a[i - 2]) {
             a[i] = a[i - 1] + a[i - 2];
       
         }
