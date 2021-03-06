@@ -3,100 +3,166 @@
 #include <string>
 #include <windows.h>
 
-std::string formate(std::string line, int format, int max_lenght) {
+
+
+
+
+
+
+std::string FormateLeft (std::string line, int max_lenght) 
+{
     int free_space = max_lenght - line.length();
-
-
-    switch (format)
+    for (int i = 0; i < free_space; i++)
     {
-    case 0:  //Formating.left
-        for (int i = 0; i < free_space; i++)
-        {
-            line.append(" ");
+        line.append(" ");
 
-        }
-
-
-
-        break;
-    case 1:  //Formating.center
-        for (int i = 0; i < free_space; i++)
-        {
-            if (i % 2 == 0) line.insert(0, " ");
-            else line.append(" ");
-
-        }
-
-
-
-        break;
-    case 2:  //Formating.right
-        for (int i = 0; i < free_space; i++)
-        {
-            line.insert(0, " ");
-
-        }
-        break;
-    case 3:  //Formating.width
-    {
-        int space_count = 0;
-
-        for (int i = 0; i < line.length(); i++) {
-            if (line[i] == ' ') space_count++;
-        }   
-        int space_width =(space_count!=0)?( free_space / space_count):(0);
-        std::string space = "";
-        
-        for (int i = 0; i < space_width; i++) {
-            space.append(" ");
-        }
-        
-        for (int i = 0; i < line.length(); i++) {
-            
-            if (line[i] == ' ') {
-                line.insert(i, space);
-                i += space_width;
-                
-            }          
-        }
-
-        int last_space = free_space - (space_count * space_width);
-        for (int i = 0; i < line.length()-1; i++) {
-            if (line[i] == ' ' && line[i + 1] != ' ') 
-            {
-                line.insert(i, " ");
-                i++;
-                last_space--;
-                if (last_space == 0) break;
-            }
-
-        }
-
-
-        break;
-    }
-
-
-    default:
-        break;
     }
     return line;
+}
+std::string FormateRight (std::string line, int max_lenght) 
+{
+    int free_space = max_lenght - line.length();
+    for (int i = 0; i < free_space; i++)
+    {
+        line.insert(0, " ");
 
+    }
 
+    return line;
+}
+std::string FormateCenter(std::string line, int max_lenght)
+{
+
+    int free_space = max_lenght - line.length();
+    for (int i = 0; i < free_space; i++)
+    {
+        if (i % 2 == 0) line.insert(0, " ");
+        else line.append(" ");
+
+    }
+
+    return line;
+}
+std::string FormateWidth (std::string line, int max_lenght)
+{
+    int free_space = max_lenght - line.length();
+    int space_count = 0;
+
+    for (int i = 0; i < line.length(); i++) {
+        if (line[i] == ' ') space_count++;
+    }
+    int space_width = (space_count != 0) ? (free_space / space_count) : (0);
+    std::string space = "";
+
+    for (int i = 0; i < space_width; i++) {
+        space.append(" ");
+    }
+
+    for (int i = 0; i < line.length(); i++) {
+
+        if (line[i] == ' ') {
+            line.insert(i, space);
+            i += space_width;
+
+        }
+    }
+
+    int last_space = free_space - (space_count * space_width);
+    for (int i = 0; i < line.length() - 1; i++) {
+        if (line[i] == ' ' && line[i + 1] != ' ')
+        {
+            line.insert(i, " ");
+            i++;
+            last_space--;
+            if (last_space == 0) break;
+        }
+
+    }
+
+    return line;
 }
 
-std::string clearSpace(std::string line) {
+
+
+std::string ClearSpace(std::string line) {
     for (int i = line.length() - 1; i >= 0; i--)
     {
         if (line[i] == ' ') {
-            if (i == 0 || i == line.length() - 1) line.erase(i,1);
-            else if (line[i - 1] == ' ') line.erase(i,1);
+            if (i == 0 || i == line.length() - 1) line.erase(i, 1);
+            else if (line[i - 1] == ' ') line.erase(i, 1);
             else if (line[i + 1] == '.' || line[i + 1] == ',' || line[i + 1] == '!' || line[i + 1] == '?') line.erase(i);
         }
 
     }
     return line;
 }
+std::string Formate(std::string line, int format, int max_lenght) {    
+    switch (format)
+    {
+    case 0:  //Formating.left
+        line = FormateLeft(ClearSpace(line), max_lenght);
+        break;
+    case 1:  //Formating.center
+        line = FormateCenter(ClearSpace(line), max_lenght);
+        break;
+    case 2:  //Formating.right
+        line = FormateRight(ClearSpace(line), max_lenght);
+        break;
+    case 3:  //Formating.width
+        line = FormateWidth(ClearSpace(line), max_lenght);
+        break;
+    default:
+        break;
+    }
+
+    return line;
+}
+int Formating(std::string* lines, int size, std::string format_code, int max_lenght ) {
+  
+    
+    for (int i = 0; i < format_code.length(); i++)
+    {
+
+        if (format_code[i] != '0' && format_code[i] != '1' && format_code[i] != '2' && format_code[i] != '3' && format_code[i] != '4') return -1;
+            
+    }
+    
+    if (format_code[0] == '4') {
+        format_code.erase();
+        
+        int i = 0;
+        int ix = 1;
+        for (int j = 0; j < size; j++)
+        {
+            format_code += std::to_string(i);
+            i += ix;
+           
+            if ((i == 2) || (i == 0)) {
+
+                ix *= -1;
+          
+            }
+         
+
+        }
+
+    }
+    if (format_code.length() < size) {
+        for (int i = format_code.length() - 1; i < size; i++) {
+            format_code = format_code + format_code[i];
+        }
+    }
+    for (int i = 0; i < size; i++)
+    {
+        lines[i] = Formate(lines[i],format_code[i] -'0', max_lenght);
+
+    }
+   
+
+    return 0;
+
+}
+
 
 int main()
 {
@@ -122,26 +188,26 @@ int main()
         }
     }
     std::cout << "Доступные типы выравнивания:" << std::endl;
-    std::cout << "0 -  выравнивание по правому краю;" << std::endl;
+    std::cout << "0 - выравнивание по правому краю;" << std::endl;
     std::cout << "1 -  выравнивание по центру;" << std::endl;
     std::cout << "2 -  выравнивание по левому краю;" << std::endl;
     std::cout << "3 -  выравнивание по ширине строки." << std::endl;
+    std::cout << "4 -  выравнивание лестницей." << std::endl;
+    std::cout << "Поддерживается формат выравнивания для каждой строки по отдельности. (несколько цифр без пробелов)" << std::endl;
     std::cout << "Введите тип выравнивания:";
-    int tf;
-    std::cin >> tf;
+    std::string tf;
+    std::getline(std::cin, tf);
 
-    for (int i = 0; i < text_COUNT; i++)
-    {
-        text[i] = formate(clearSpace(text[i]), tf, MAX_LENGHT);
+    if (Formating(text, text_COUNT, tf, MAX_LENGHT) == 0) {
+        for (int i = 0; i < text_COUNT; i++)
+        {
+            std::cout << text[i] << std::endl;
 
+
+        }
     }
 
-    for (int i = 0; i < text_COUNT; i++)
-    {
-        std::cout << text[i] << std::endl;
-
-
-    }
+   
 
 
 
