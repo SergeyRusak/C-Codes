@@ -9,7 +9,7 @@
 
 
 
-std::string FormateLeft (std::string line, int max_lenght) 
+std::string FormateLeft(std::string line, int max_lenght)
 {
     int free_space = max_lenght - line.length();
     for (int i = 0; i < free_space; i++)
@@ -19,7 +19,7 @@ std::string FormateLeft (std::string line, int max_lenght)
     }
     return line;
 }
-std::string FormateRight (std::string line, int max_lenght) 
+std::string FormateRight(std::string line, int max_lenght)
 {
     int free_space = max_lenght - line.length();
     for (int i = 0; i < free_space; i++)
@@ -43,7 +43,7 @@ std::string FormateCenter(std::string line, int max_lenght)
 
     return line;
 }
-std::string FormateWidth (std::string line, int max_lenght)
+std::string FormateWidth(std::string line, int max_lenght)
 {
     int free_space = max_lenght - line.length();
     int space_count = 0;
@@ -96,53 +96,47 @@ std::string ClearSpace(std::string line) {
     }
     return line;
 }
-std::string Formate(std::string line, int format, int max_lenght) {    
-    switch (format)
-    {
-    case 0:  //Formating.left
-        line = FormateLeft(ClearSpace(line), max_lenght);
-        break;
-    case 1:  //Formating.center
-        line = FormateCenter(ClearSpace(line), max_lenght);
-        break;
-    case 2:  //Formating.right
-        line = FormateRight(ClearSpace(line), max_lenght);
-        break;
-    case 3:  //Formating.width
-        line = FormateWidth(ClearSpace(line), max_lenght);
-        break;
-    default:
-        break;
-    }
+std::string Formate(std::string line, int format, int max_lenght) {
+    std::string(*Form[4]) (std::string, int);
+    Form[0] = FormateLeft;
+    Form[1] = FormateCenter;
+    Form[2] = FormateRight;
+    Form[3] = FormateWidth;
 
+
+    if (format != 0 && format != 1 && format != 2 && format !=3) format = 0;
+    line = Form[format](ClearSpace(line), max_lenght);
+
+
+   
     return line;
 }
-int Formating(std::string* lines, int size, std::string format_code, int max_lenght ) {
-  
-    
+int Formating(std::string* lines, int size, std::string format_code, int max_lenght) {
+
+
     for (int i = 0; i < format_code.length(); i++)
     {
 
         if (format_code[i] != '0' && format_code[i] != '1' && format_code[i] != '2' && format_code[i] != '3' && format_code[i] != '4') return -1;
-            
+
     }
-    
+
     if (format_code[0] == '4') {
         format_code.erase();
-        
+
         int i = 0;
         int ix = 1;
         for (int j = 0; j < size; j++)
         {
             format_code += std::to_string(i);
             i += ix;
-           
+
             if ((i == 2) || (i == 0)) {
 
                 ix *= -1;
-          
+
             }
-         
+
 
         }
 
@@ -154,10 +148,10 @@ int Formating(std::string* lines, int size, std::string format_code, int max_len
     }
     for (int i = 0; i < size; i++)
     {
-        lines[i] = Formate(lines[i],format_code[i] -'0', max_lenght);
+        lines[i] = Formate(lines[i], format_code[i] - '0', max_lenght);
 
     }
-   
+
 
     return 0;
 
@@ -181,7 +175,7 @@ int main()
 
         std::getline(std::cin, text[i]);
 
-        while (text[i].length() ==0) std::getline(std::cin, text[i]);
+        while (text[i].length() == 0) std::getline(std::cin, text[i]);
 
         if (text[i].length() > MAX_LENGHT) {
             text[i].erase(MAX_LENGHT, text[i].length() - MAX_LENGHT);
@@ -205,10 +199,10 @@ int main()
         }
     }
     else {
-        std::cout << "Неверный код форматирования"<< std::endl;
+        std::cout << "Неверный код форматирования" << std::endl;
     }
 
-   
+
 
 
 
