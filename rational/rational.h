@@ -3,11 +3,13 @@
 using namespace std;
 class rational
 {
-	int numer;
-	int denom;
-
-
 public:
+	long long numer;
+	long long denom;
+
+	double sqrt(long long a, double x, int TTL);
+	double sqrt(long long a);
+
 	rational();
 	rational(int n);
 	rational(double n);
@@ -24,7 +26,7 @@ public:
 	rational operator *(const rational& r) const;
 	rational operator /(const rational& r) const;
 
-	rational& operator ++();
+	rational operator ++();
 	rational operator ++(int);
 
 	bool operator ==(const rational& r) const;
@@ -39,6 +41,7 @@ public:
 
 
 	void simplify();
+	void simplify_equlid();
 	rational sqrt();
 
 
