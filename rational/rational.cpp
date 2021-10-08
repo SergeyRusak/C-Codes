@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string>
 
+
 rational::rational()
 {
 	numer = 0;
@@ -13,12 +14,15 @@ rational::rational(int n)
 	denom = 1;
 }
 rational::rational(double n) {
-	// not the best solution
-	string s = to_string(n);
-	int exp = (s[0] != '0') ? (s.length()-2) : (s.length()-1);
-	numer = n * std::pow(10, exp);
-	denom = std::pow(10, exp);
-	simplify();
+
+	long long lln = *(long long*)&n;
+	int r = (int)((lln >> 52) & 0x000007FF) - 1023;
+	lln = (lln & 0x000FFFFFFFFFFFFF)|0x0010000000000000;
+	numer = (r >= 0) ? lln << ((long long)(r)) : lln >> (long long)(-r);
+	denom = (long long)(1) << 52;
+
+	simplify_equlid();
+	
 
 
 }
@@ -26,35 +30,35 @@ rational::rational(int n, int d)
 {
 	numer = n;
 	denom = d;
-	simplify();
+	simplify_equlid();
 }
 
 rational& rational::operator +=(const rational& r)
 {
 	numer = (numer * r.denom + denom * r.numer);
 	denom *= r.denom;
-	simplify();
+	simplify_equlid();
 	return *this;
 }
 rational& rational::operator -=(const rational& r)
 {
 	numer = (numer * r.denom - denom * r.numer);
 	denom *= r.denom;
-	simplify();
+	simplify_equlid();
 	return *this;
 }
 rational& rational::operator *=(const rational& r)
 {
 	numer *= r.numer;
 	denom *= r.denom;
-	simplify();
+	simplify_equlid();
 	return *this;
 }
 rational& rational::operator /=(const rational& r)
 {
 	numer *= r.denom;
 	denom *= r.numer;
-	simplify();
+	simplify_equlid();
 	return *this;
 }
 
@@ -79,15 +83,16 @@ rational rational::operator /(const rational& r) const
 	return res /= r;
 }
 
-rational& rational::operator ++()
+rational rational::operator ++()
 {
-	numer += denom;
-	return *this;
+	rational r(*this);
+	r.numer += r.denom;
+	return r;
 }
 rational rational::operator ++(int)
 {
 	rational r(*this);
-	numer += denom;
+	r.numer += r.denom;
 	return r;
 }
 
@@ -112,6 +117,7 @@ rational::operator double() const
 istream& operator >>(istream& in, rational& r)
 {
 	in >> r.numer >> r.denom;
+	r.simplify_equlid();
 	return in;
 }
 ostream& operator <<(ostream& out, const rational& r)
@@ -121,7 +127,15 @@ ostream& operator <<(ostream& out, const rational& r)
 }
 
 
+double rational::sqrt(long long a, double x, int TTL) {
+	if (a / x > LLONG_MAX - x) return x;
+	double xi = (x + (a / x)) * 0.5;
+	return (xi == x|| TTL==0) ? (xi) : (sqrt(a,xi,TTL-1));
+}
 
+double rational::sqrt(long long a) {
+	return sqrt(a, 3.0, 255);
+}
 
 void rational::simplify()
 {
@@ -138,10 +152,24 @@ void rational::simplify()
 			i--;
 		}
 }
+void rational::simplify_equlid()
+{
+	long long t, num,den;
+	num = abs(numer);
+	den = abs(denom);
+	while (den != 0) {
+		t = den;
+		den = num % den;
+		num = t;
+	}
+	denom /= num;
+	numer /= num;
+
+}
 rational rational::sqrt() {
 
-	rational n = std::sqrt(numer);
-	rational d = std::sqrt(denom);
+	rational n(sqrt(numer));
+	rational d(sqrt(denom));
 
 	return n / d;
 }
