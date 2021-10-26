@@ -7,8 +7,7 @@ public:
 	long long numer;
 	long long denom;
 
-	double sqrt(long long a, double x, int TTL);
-	double sqrt(long long a);
+	
 
 	rational();
 	rational(int n);
@@ -33,7 +32,7 @@ public:
 	bool operator !=(const rational& r) const;
 
 
-	operator int() const;
+	operator long long() const;
 	operator double() const;
 
 	friend istream& operator >>(istream& in, rational& r);
@@ -42,12 +41,13 @@ public:
 
 	void simplify();
 	void simplify_equlid();
-	rational sqrt();
 
+
+	rational sqrt();
+	rational sqrt(rational a, rational x, int TTL);
 
 
 
 
 
 };
-
