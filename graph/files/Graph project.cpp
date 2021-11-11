@@ -2,19 +2,43 @@
 //
 
 #include <iostream>
-
+#include <fstream>
+#include <string>
+#include <set>
+#include "Graph.h"
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::string path = "F:/Desktop/TestGraph.txt";
+    ifstream inpfile(path);
+    Graph graph;
+    set<Node> nodes;
+    graph.addNode(new Node("21"));
+    cout << graph.getNodebyName("21")->getName();
+    string a;
+    do {
+        getline(inpfile, a);// для пропуска test и source
+    } while (a == "");
+    while (inpfile.good())
+    {
+        int s, t;
+        inpfile >> s >> t;
+        Node ns(to_string(s)), nt(to_string(t));
+        if (nodes.find(ns) == nodes.end()) {
+            nodes.insert(ns);
+            graph.addNode(&ns);
+        }
+        else {
+            ns = *graph.getNodebyName(to_string(s));
+        }
+        if (nodes.find(nt) == nodes.end()) {
+            nodes.insert(nt);
+            graph.addNode(&nt);
+        }
+        else {
+            nt = *graph.getNodebyName(to_string(t));
+        }
+        graph.addEdge(&ns, &nt);
+    }
+    
+    
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.

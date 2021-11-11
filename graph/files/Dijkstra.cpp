@@ -1,6 +1,22 @@
 #include "Dijkstra.h"
 #include "PriorityOueue.h"
 #include <map>
+
+
+static Way unroll(std::map<Node*, MarkedNode> visited,
+	Node* begin, Node* curr) {
+	Way way;
+	way.length = visited[curr].mark;
+	while (curr != begin) {
+		way.nodes.push_back(curr);
+		curr = visited[curr].prev;
+	}
+	way.nodes.push_back(begin);
+	return way;
+}
+
+
+
 Way Dijkstra::shortestWay(Node* begin, Node* end) {
 	PriorityQueue nodes; nodes.push(begin, 0, 0);
 	std::map<Node*, MarkedNode> visited;
@@ -17,15 +33,6 @@ Way Dijkstra::shortestWay(Node* begin, Node* end) {
 	}
 	return Way();
 }
-static Way unroll(std::map<Node*, MarkedNode> visited,
-	Node* begin, Node* curr) {
-	Way way;
-	way.length = visited[curr].mark;
-	while (curr != begin) {
-		way.nodes.push_back(curr);
-		curr = visited[curr].prev;
-	}
-	way.nodes.push_back(begin);
-	return way;
-}
+
+
 
