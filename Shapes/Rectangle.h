@@ -7,9 +7,9 @@ class Rectangle :
     double a, b;
 
 public:
-    Rectangle(double h, double v) { a = h; b = v; }
-    double calc_area() { return a * b; }
-    double calc_perimetr() { return 2 *(a + b); }
-    std::string get_name() { return "Rectangle"; }
+    Rectangle(double h, double v);
+    double calc_area();
+    double calc_perimetr();
+    std::string get_name();
 };
 
