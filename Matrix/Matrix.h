@@ -37,7 +37,7 @@ public:
         }
     
     }
-    Matrix(Matrix &mat):Array2D(mat.getCols(),mat.getRows()) {
+    Matrix(Matrix &mat):Array2D<T>(mat.getCols(),mat.getRows()) {
         for (int x = 0; x < this->getCols(); x++)
         {
             for (int y = 0; y < this->getRows(); y++)
@@ -48,8 +48,7 @@ public:
         }
     }
 
-
-    Matrix& operator = (Matrix<T> arr) {
+    Matrix<T>& operator = (Matrix<T> arr) {
 
         this->cols = arr.getCols();
         this->rows = arr.getRows();
@@ -66,7 +65,7 @@ public:
             }
 
         }
-        for (int i = 0; i < this->cols; i++)
+      /*  for (int i = 0; i < this->cols; i++)
         {
             if (this->data[i] != NULL) {
                 delete[] this->data[i];
@@ -74,7 +73,7 @@ public:
 
         }
         delete[] this->data;
-        this->data = tempdata;
+*/        this->data = tempdata;
 
         return *this;
     }
@@ -217,5 +216,67 @@ public:
         }
         return result;
     }
+
+    Matrix<T>& getMinor(int ix, int iy) {
+        Matrix<T> proc(this->getCols() - 1, this->getRows() - 1);
+        int xx(0), yy(0);
+        for (int x = 0; x < this->getCols(); x++)
+        {
+            if (x == ix) continue;
+            yy = 0;
+            for (int y = 0; y < this->getRows(); y++) {
+                if (y == iy)continue;
+                proc.set(this->get(x, y), xx, yy);
+                yy++;
+            }
+            xx++;
+        }
+        return proc;
+
+    }
+
+
+    T det() {
+        if (this->getCols() != this->getRows()) throw MatrixException("Matrix must be square!");
+
+        if (this->getCols() == 2) return this->get(0, 0) * this->get(1, 1) - this->get(1, 0) * this->get(0, 1);
+
+        T deter = 0;
+        int k = -1;
+        for (int x = 0; x < this->getCols(); x++) {
+            k = -k;
+            deter += this->get(x, 0) * this->getMinor(x, 0).det()*k;
+            
+        }
+        
+        return deter;
+    }
+
+    Matrix<double> getInvert() {
+        T det = this->det();
+        if (det == 0) throw MatrixException("Inverted Matrix doesn't exist. Determinant equals zero.");
+        Matrix<T> transMinors(this->getCols(), this->getRows());
+
+        for (int x = 0; x < this->getCols(); x++)
+        {
+            for (int y = 0; y < this->getRows(); y++)
+            {
+                transMinors.set(this->transp().getMinor(x, y).det(), x, y);
+            }
+        }
+        Matrix<double> result(this->getCols(), this->getRows());
+
+        for (int x = 0; x < this->getCols(); x++)
+        {
+            for (int y = 0; y < this->getRows(); y++)
+            {
+                result.set(transMinors.get(x, y) / (double)det,x,y);
+            }
+        }
+
+        return result;
+    }
+
+
 
 };

@@ -9,16 +9,28 @@ int main()
 {
 	Array2D<int> a1(3, 3);
 	a1.set(5, 1, 1);
-	std::cout << a1.get(1, 1) << std::endl;
 	Matrix<int> m1(3, 3);
 	m1.set(10, 1, 1);
 	Matrix<int> m2 = m1;
 	//m2 -= m1;
 	m2 *= 5;
-	Matrix<int> m3(3, 4);
-	m3 = (m2 * m1) - m1;
-	//Matrix<int> m4 = m3 ^ 2;
-	std::cout << m3.get(1, 1) << std::endl;
+	Matrix<int> m3 = (m2 * m1) - m1;
+	Matrix<int> m4 = m3 ^ 2;
+
+
+	Matrix<int> m6(3, 3);
+	m6.set(1, 0, 0);
+	m6.set(2, 1, 0);
+	m6.set(3, 2, 0);
+	m6.set(4, 2, 1);
+	m6.set(5, 2, 2);
+	m6.set(6, 1, 2);
+	m6.set(7, 0, 2);
+	m6.set(8, 0, 1);
+	m6.set(9, 1, 1);
+
+
+	std::cout << m6.getInvert().det();
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

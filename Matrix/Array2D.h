@@ -19,6 +19,8 @@ public:
 		for (int count = 0; count < c; count++)
 			data[count] = new T[rows];
 	}
+	~Array2D() = default;
+	/*
 	~Array2D() {
 		for (int i = 0; i < cols; i++)
 		{
@@ -31,7 +33,7 @@ public:
 			delete[] data;
 		}
 	}
-
+	*/
 	Array2D(Array2D<T> &arr) {
 		cols = arr.getCols();
 		rows = arr.getRows();
@@ -66,14 +68,14 @@ public:
 			}
 
 		}
-		for (int i = 0; i < cols; i++)
+		/*for (int i = 0; i < cols; i++)
 		{
 			if (data[i] != NULL) {
 				delete[] data[i];
 			}
 
 		}
-		delete[] data;
+		delete[] data;*/
 		data = tempdata;
 		return *this;
 	}
