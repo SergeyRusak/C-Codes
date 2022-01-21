@@ -72,6 +72,9 @@ public:
 
 	}
 
+	std::string getStory() {
+		return turn_story;
+	}
 	void startup(int size) {
 		field = new Field(size);
 		turn_story = "";

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "GameManager.h"
 #include "GameAI.h"
+#include <fstream>
 
 int main()
 {
@@ -12,7 +13,7 @@ int main()
 	GameAI ai1(size);
 	//GameAI ai2(size);
 	char conf;
-	std::cout << "Хотите начать первым? (N/Y) :";
+	std::cout << "Do you want to play crosses? (N/Y) :";
 	std::cin >> conf;
 	Move move;
 	if (conf == 'N') {
@@ -24,17 +25,28 @@ int main()
 		std::cout << gm.print() << std::endl;
 		int px(-1), py(-1);
 		while (px < 0 && py < 0 || py >= size && px >= size) {
-			std::cout << "Введите координаты в формате X Y : ";
+			std::cout << "Enter the coordinats in format \"X Y\" : ";
 			std::cin >> px >> py;
 		}
 
 		gm.turn(px, py);
 		std::cout << gm.print() << std::endl;
+		if (gm.isGameOver()) break;
 		move = ai1.generate(px, py);
 		gm.turn(move.x,move.y);
 		std::cout << gm.print() << std::endl;
 	}
-	
+	std::cout << "Very well! Do you wanna save the turns story? (Y/N): ";
+	std::cin >> conf;
+	if (conf == 'Y') {
+		std::string nameout;
+		std::cout << "Please, enter the name of file:";
+		std::cin >> nameout;
+		std::ofstream out(nameout);
+		out << gm.getStory();
+		out.close();
+	}
+	std::cout << "Ok, good bye!";
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
