@@ -9,5 +9,7 @@ public:
 	Move(int xi = 0, int yi = 0) {
 		x = xi;
 		y = yi;
+		att = 0;
+		def = 0;
 	}
 };

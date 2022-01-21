@@ -25,14 +25,16 @@ private:
 		int yB = fmin(field.getSize() - y - 1, 4);
 		int yL = fmin(x, 4);
 
+
+
 		for (int j = y - yT; j <= y + yB; j++)
 			res[0] += std::to_string(field.get(x, j));
 		for (int i = x - yL; i <= x + yR; i++)
-			res[1] += std::to_string(field.get(y, i));
+			res[1] += std::to_string(field.get(i, y));
 		for (int i = -fmin(yT, yL); i <= fmin(yR, yB); i++)
-			res[2] += std::to_string(field.get(y + i, x + i));
+			res[2] += std::to_string(field.get(x + i, y + i));
 		for (int i = -fmin(yB, yL); i <= fmin(yR, yT); i++)
-			res[3] += std::to_string(field.get(y - i, x + i));
+			res[3] += std::to_string(field.get(x + i, y - i));
 		return res;
 
 	}
@@ -106,7 +108,8 @@ public:
 
 	void gameOver(int result) {
 		over = true;
-		std::cout << "Game over! winner is #" <<result<< std::endl;
+		char a = (result == 1) ? ('X') : ('O');
+		std::cout << "Game over! winner is " << a << std::endl;
 		turn_story += "win #" + result;
 	}
 	bool isGameOver() { return over; }
@@ -120,6 +123,11 @@ public:
 		int result = windetect(x,y);
 		if (result != 0) gameOver(field.get(x,y));
 		return true;
+	}
+
+	bool correct(int x, int y) {
+		if (x < 0 || y < 0 || y >= field.getSize() || x >= field.getSize()) return false;
+		return (field.get(x, y) == 0);
 	}
 
 	std::string print() {

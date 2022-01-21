@@ -4,6 +4,7 @@
 #include <math.h>
 #include "paterns.h"
 #include "Move.h"
+#include <iostream>
 
 
 class GameAI
@@ -20,6 +21,11 @@ class GameAI
 		return false;
 	}
 
+	void addPosibleMove(int x, int y, ArrayList<Move>* arr) {
+		if (x < 0 || x >= field.getSize() || y < 0 || y >= field.getSize()) return;
+		if (field.get(x, y) == 0 && !exist(*arr, Move(x, y))) arr->insert(Move(x, y));
+	}
+
 	ArrayList<Move> findPosibles() {
 		ArrayList<Move> possible = ArrayList<Move>();
 
@@ -27,90 +33,22 @@ class GameAI
 		{
 			for (int j = 0; j < field.getSize(); j++) {
 				if (field.get(j, i) != 0) { // поиск всех доступных ходов
-					if (j + 1 < field.getSize())
-						if (field.get(j + 1, i) == 0)
-							if (!exist(possible, Move(j + 1, i)))
-								possible.insert(Move(j + 1, i));
-
-					if (i + 1 < field.getSize())
-						if (field.get(j , i+1) == 0)
-							if (!exist(possible, Move(j , i+1)))
-								possible.insert(Move(j , i+1));
-
-					if (j - 1 >=0)
-						if (field.get(j - 1, i) == 0)
-							if (!exist(possible, Move(j - 1, i)))
-								possible.insert(Move(j - 1, i));
-
-					if (i - 1 >= 0)
-						if (field.get(j, i-1) == 0)
-							if (!exist(possible, Move(j, i-1)))
-								possible.insert(Move(j, i-1));
-
-
-					if (j + 1 < field.getSize() && i - 1 >= 0)
-						if (field.get(j + 1, i - 1) == 0)
-							if (!exist(possible, Move(j + 1, i - 1)))
-								possible.insert(Move(j + 1, i - 1));
-
-					if (i + 1 < field.getSize() && j + 1 < field.getSize())
-						if (field.get(j + 1, i + 1) == 0)
-							if (!exist(possible, Move(j + 1, i + 1)))
-								possible.insert(Move(j + 1, i + 1));
-
-					if (j - 1 >= 0 && i + 1 < field.getSize())
-						if (field.get(j - 1, i + 1) == 0)
-							if (!exist(possible, Move(j - 1, i + 1)))
-								possible.insert(Move(j - 1, i + 1));
-
-					if (i - 1 >= 0 && j - 1 >= 0)
-						if (field.get(j - 1, i - 1) == 0)
-							if (!exist(possible, Move(j - 1, i - 1)))
-								possible.insert(Move(j - 1, i - 1));
-
-
-
-					if (j + 2 < field.getSize())
-						if (field.get(j + 2, i) == 0)
-							if (!exist(possible, Move(j + 2, i)))
-								possible.insert(Move(j + 2, i));
-
-					if (i + 2 < field.getSize())
-						if (field.get(j, i + 2) == 0)
-							if (!exist(possible, Move(j, i + 2)))
-								possible.insert(Move(j, i + 2));
-
-					if (j - 2 >= 0)
-						if (field.get(j - 2, i) == 0)
-							if (!exist(possible, Move(j - 2, i)))
-								possible.insert(Move(j - 2, i));
-
-					if (i - 2 >= 0)
-						if (field.get(j, i - 2) == 0)
-							if (!exist(possible, Move(j, i - 2)))
-								possible.insert(Move(j, i - 2));
-
-
-					if (j + 2 < field.getSize() && i - 2 >= 0)
-						if (field.get(j + 2, i - 2) == 0)
-							if (!exist(possible, Move(j + 2, i - 2)))
-								possible.insert(Move(j + 2, i - 2));
-
-					if (i + 2 < field.getSize() && j + 2 < field.getSize())
-						if (field.get(j + 2, i + 2) == 0)
-							if (!exist(possible, Move(j + 2, i + 2)))
-								possible.insert(Move(j + 2, i + 2));
-
-					if (j - 2 >= 0 && i + 2 < field.getSize())
-						if (field.get(j - 2, i + 2) == 0)
-							if (!exist(possible, Move(j - 2, i + 2)))
-								possible.insert(Move(j - 2, i + 2));
-
-					if (i - 2 >= 0 && j - 2 >= 0)
-						if (field.get(j - 2, i - 2) == 0)
-							if (!exist(possible, Move(j - 2, i - 2)))
-								possible.insert(Move(j - 2, i - 2));
-
+					addPosibleMove(j + 1, i    , &possible);
+					addPosibleMove(j - 1, i    , &possible);
+					addPosibleMove(j    , i + 1, &possible);
+					addPosibleMove(j    , i - 1, &possible);
+					addPosibleMove(j + 1, i + 1, &possible);
+					addPosibleMove(j + 1, i - 1, &possible);
+					addPosibleMove(j - 1, i + 1, &possible);
+					addPosibleMove(j - 1, i - 1, &possible);
+					addPosibleMove(j + 2, i    , &possible);
+					addPosibleMove(j - 2, i    , &possible);
+					addPosibleMove(j    , i + 2, &possible);
+					addPosibleMove(j    , i - 2, &possible);
+					addPosibleMove(j + 2, i + 2, &possible);
+					addPosibleMove(j + 2, i - 2, &possible);
+					addPosibleMove(j - 2, i + 2, &possible);
+					addPosibleMove(j - 2, i - 2, &possible);
 
 				}
 
@@ -139,16 +77,16 @@ class GameAI
 		for (int j = y - yT; j <= y + yB; j++)
 			res[0] += (j == y) ? "7" : std::to_string(field.get(x,j));
 		for (int i = x - yL; i <= x + yR; i++)
-			res[1] += (i == x) ? "7" : std::to_string(field.get(y,i));
+			res[1] += (i == x) ? "7" : std::to_string(field.get(i,y));
 		for (int i = -fmin(yT, yL); i <= fmin(yR, yB); i++)
-			res[2] += (i == 0) ? "7" : std::to_string(field.get(y + i,x + i));
+			res[2] += (i == 0) ? "7" : std::to_string(field.get(x + i,y + i));
 		for (int i = -fmin(yB, yL); i <= fmin(yR, yT); i++)
-			res[3] += (i == 0) ? "7" : std::to_string(field.get(y - i,x + i));
+			res[3] += (i == 0) ? "7" : std::to_string(field.get(x + i,y - i));
 		return res;
 
 	}
 
-	void analysisMoves() {
+	void analysisMoves(int my_tile) {
 		paterns pt;
 		possible_moves = findPosibles();
 		for (int i = 0; i < possible_moves.getSize(); i++)
@@ -163,7 +101,7 @@ class GameAI
 				score2 += pt.getScore(lines[i], 2);
 			}
 
-			if (my_turn_first) {
+			if (my_tile == 1) {
 				possible_moves[i].att = score1;
 				possible_moves[i].def = score2;
 			}
@@ -246,21 +184,22 @@ public:
 
 	}
 
-	Move generate(bool is_predict = false) { //первый ход в игре
-		my_turn_first = true;
 
-		if (!is_predict) field.set(7, 7, 1);
-		return  Move(7, 7);
+	void addturn(int x, int y, int type) {
+		field.set(x, y, type);
 	}
 
-	Move generate(int x, int y, bool is_predict = false) {
-		if (my_turn_first)
-			field.set(x, y, 2);
-		else
-			field.set(x, y, 1);
+
+	Move generate(bool first_turn,int my_tile, bool is_predict) {
+		my_turn_first = first_turn;
+
+		if (!is_predict && first_turn) {
+			field.set(field.getSize() / 2, field.getSize() / 2, 1);
+			return  Move(field.getSize() / 2, field.getSize() / 2);
+		}
 
 		possible_moves = findPosibles();
-		analysisMoves();
+		analysisMoves(my_tile);
 		updateGoodMoves();
 
 
@@ -291,10 +230,15 @@ public:
 		//TODO: выбор лучшего хода из лучших ( или что-то интереснее)
 		
 		if (!is_predict) {
-			if (!my_turn_first)
-				field.set(selected.x, selected.y, 2);
-			else
-				field.set(selected.x, selected.y, 1);
+				field.set(selected.x, selected.y, my_tile);
+		}
+		else {
+			std::cout << "Predicted turns:";
+			for (int i = 0; i < good_moves.getSize(); i++)
+			{
+				std::cout << "[" << good_moves[i].x << ":" << good_moves[i].y << "]";
+			}
+			std::cout << std::endl;
 		}
 		return selected;
 

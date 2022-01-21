@@ -7,8 +7,8 @@ private:
 	int size;
 
 public:
-	Field(int n = 3) {
-		size = (n < 3)?(3):(n);
+	Field(int n = 5) {
+		size = (n < 5)?(5):(n);
 
 		cells = new Cell* [size];
 		for (int i = 0; i < size; i++)
@@ -37,11 +37,7 @@ public:
 		
 	}
 	Field& operator = (Field* f) {
-		for (int i = 0; i < size; i++)
-		{
-			delete[] cells[i];
-		}
-		delete[] cells;
+		this->~Field();
 
 
 

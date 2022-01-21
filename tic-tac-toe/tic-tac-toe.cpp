@@ -10,31 +10,62 @@ int main()
 {
 	int size = 20;
 	GameManager gm(size);
-	GameAI ai1(size);
-	//GameAI ai2(size);
+	GameAI ai1(size),ai2(size);
 	char conf;
-	std::cout << "Do you want to play crosses? (N/Y) :";
+	std::cout << "Do you want to see bot battle? (N/Y) :";
 	std::cin >> conf;
 	Move move;
-	if (conf == 'N') {
-		move = ai1.generate();
+	if (conf == 'Y') {
+		move = ai1.generate(true, 1, false);
 		gm.turn(move.x, move.y);
-		std::cout << gm.print() << std::endl;
-	}
-	while (!gm.isGameOver()) {
-		std::cout << gm.print() << std::endl;
-		int px(-1), py(-1);
-		while (px < 0 && py < 0 || py >= size && px >= size) {
-			std::cout << "Enter the coordinats in format \"X Y\" : ";
-			std::cin >> px >> py;
+		
+		while (!gm.isGameOver()) {
+			ai2.addturn(move.x, move.y, 1);
+			move = ai2.generate(false, 2, false);
+			gm.turn(move.x, move.y);
+			std::cout << "AI2\'s turn -> " << move.x <<":" << move.y << std::endl;
+			std::cout << gm.print() << std::endl;
+			if (gm.isGameOver()) break;
+			ai1.addturn(move.x, move.y, 2);
+			move = ai1.generate(false, 1, false);
+			gm.turn(move.x, move.y);
+			std::cout << "AI1\'s turn -> " << move.x << ":" << move.y << std::endl;
+			std::cout << gm.print() << std::endl;
 		}
 
-		gm.turn(px, py);
+	}
+	else {
+		std::cout << "Do you want to play crosses? (N/Y) :";
+		std::cin >> conf;
+		bool player_is_first = false;
+		if (conf == 'N') {
+			move = ai1.generate(true, 1, false);
+			gm.turn(move.x, move.y);
+			ai2.addturn(move.x, move.y, 1);
+		}
+		else {
+			player_is_first = true;
+		}
 		std::cout << gm.print() << std::endl;
-		if (gm.isGameOver()) break;
-		move = ai1.generate(px, py);
-		gm.turn(move.x,move.y);
-		std::cout << gm.print() << std::endl;
+		while (!gm.isGameOver()) {
+			int px(-1), py(-1);
+			if (!player_is_first)ai2.generate(false, 2, true);
+			player_is_first = false;
+			while (!gm.correct(px, py)) {
+				std::cout << "Enter the coordinats in format \"X Y\" : ";
+				std::cin >> px >> py;
+			}
+
+			gm.turn(px, py);
+			ai2.addturn(px, py, (conf == 'N') ? (1) : (2));
+			ai1.addturn(px, py, (conf == 'N') ? (2) : (1));
+			std::cout << gm.print() << std::endl;
+			if (gm.isGameOver()) break;
+			move = ai1.generate(false, (conf == 'N') ? (1) : (2), false);
+			gm.turn(move.x, move.y);
+			ai2.addturn(move.x, move.y, (conf == 'N') ? (2) : (1));
+			std::cout << gm.print() << std::endl;
+		}
 	}
 	std::cout << "Very well! Do you wanna save the turns story? (Y/N): ";
 	std::cin >> conf;
