@@ -10,7 +10,8 @@ int main()
     testsize.push_back(2);
     testsize.push_back(3);
     NDArray<int> test(testsize);
-    NDArray<int> ones = NDArray<int>::one(testsize);
+    test.set(3, 1);
+    std::cout << test.get(3);
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

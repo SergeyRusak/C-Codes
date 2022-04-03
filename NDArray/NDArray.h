@@ -29,10 +29,10 @@ class NDArray
 
 
 	
-	
 
 
 private:
+
 	std::vector<int> size;
 	T* data;
 
@@ -98,17 +98,53 @@ public:
 		va_end(factor);
 		size = temp;
 
-		T* data = new T[GetFullSize()];
+		T* data = (T*)malloc(sizeof(T) * GetFullSize());
+		if (data == nullptr) throw NDArrayException("malloc give nullptr");
 
 
 	}
 	NDArray<T>(std::vector<int> init_size) {
 
 		size = init_size;
-		T* data = new T[GetFullSize()];
+		T* data =(T*) malloc(sizeof(T) * GetFullSize());
+		if (data == nullptr) throw NDArrayException("malloc give nullptr");
 
 	}
-	NDArray<T>(const NDArray<T> *origin) : size(origin->size), data(origin->data) {
+
+	~NDArray<T>() {
+		delete[] data;
+	}
+
+
+
+	void set(int index, T value) {//linear
+		data[index] = value;
+	}
+	void set(std::vector<int> index, T value) {//multydim
+
+		if (index.size() != size.size()) {
+			throw NDArrayException("The index must contain the same number of dimensions as the array itself!");
+		}
+
+		set(GetLinearIndex(index), value);
+	}
+
+	T get(int index) {
+		return data[index];
+	}
+	T get(std::vector<int> index) {
+		return get(GetLinearIndex(index));
+	}
+
+
+
+
+
+	NDArray<T>(const NDArray<T> *origin)
+	{
+		size = origin->size;
+		delete[] data;
+		data = origin->data;
 	}
 
 	static NDArray<T>* one(std::vector<int> temper) {
@@ -116,11 +152,11 @@ public:
 		NDArray<T> temp = new NDArray<T>(temper);
 		for (int i = 0; i < temp.GetFullSize(); i++)
 		{
-			temp.data[i] = 1;
+			temp.set(i, 1);
 		}
 
 
-		return temp;
+		return &temp;
 	}
 
 
