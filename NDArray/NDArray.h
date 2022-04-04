@@ -3,6 +3,8 @@
 #include <vector>
 #include <stdarg.h>
 #include <string>
+#include <ctime>
+#include <functional>
 
 
 
@@ -29,19 +31,19 @@ class NDArray
 
 
 	
-
+	T* data;
 
 private:
 
 	std::vector<int> size;
-	T* data;
+	
 
 
 	int GetFullSize() {
-		int full = 0;
+		int full = 1;
 		for (int i = 0; i < size.size(); i++)
 		{
-			full += size[i];
+			full *= size[i];
 		}
 		return full;
 	}
@@ -67,6 +69,17 @@ private:
 		return result;
 	}
 
+	bool CheckIndex(int index) {
+		if (index < 0 || index >= GetFullSize()) throw new NDArrayException("Index out of bounds!");
+
+
+
+		return true;
+	}
+	bool CheckIndex(std::vector<int> index) {
+		return CheckIndex(GetLinearIndex(index));
+	}
+	
 
 
 	/* std::vector<int> getVectorFromParametrs(int* p) {
@@ -84,6 +97,36 @@ private:
 	}
 	*/ // just paste it in code when you want to get vector from unknown count parametrs
 
+	// math multyfunctional
+
+
+	static NDArray<T> math(NDArray<T> a, NDArray<T> b, std::function<T(T,T)> func) {
+		if (a.GetFullSize() != b.GetFullSize()) throw NDArrayException("NDArrays sizes doesn't match");
+
+		for (int i = 0; i < a.size.size(); i++)
+		{
+			if (a.size[i] != b.size[i] ) throw  NDArrayException("NDArrays shapes doesn't match");
+		}
+
+		NDArray<T> result(a.size);
+
+		for (int i = 0; i < a.size.size(); i++)
+		{
+			result.set(i, func(a.get(i), b.get(i)));
+		}
+
+		return result;
+
+	}
+
+
+
+
+
+
+
+
+
 public:
 
 	NDArray<T>(int n, ...) { // example:  NDArray<int> (3,x,y,z);
@@ -96,9 +139,9 @@ public:
 			temp.push_back(va_arg(factor, int));
 		}
 		va_end(factor);
-		size = temp;
 
-		T* data = (T*)malloc(sizeof(T) * GetFullSize());
+		size = temp;
+		data = (T*) malloc(sizeof(T) * GetFullSize());
 		if (data == nullptr) throw NDArrayException("malloc give nullptr");
 
 
@@ -106,19 +149,19 @@ public:
 	NDArray<T>(std::vector<int> init_size) {
 
 		size = init_size;
-		T* data =(T*) malloc(sizeof(T) * GetFullSize());
+		data = (T*) malloc(sizeof(T) * GetFullSize());
 		if (data == nullptr) throw NDArrayException("malloc give nullptr");
 
 	}
 
-	~NDArray<T>() {
-		delete[] data;
-	}
+	//~NDArray<T>() {
+	//	delete[] data;
+	//}
 
 
 
 	void set(int index, T value) {//linear
-		data[index] = value;
+		this->data[index] = value;
 	}
 	void set(std::vector<int> index, T value) {//multydim
 
@@ -130,39 +173,83 @@ public:
 	}
 
 	T get(int index) {
+		CheckIndex(index);
 		return data[index];
 	}
 	T get(std::vector<int> index) {
 		return get(GetLinearIndex(index));
 	}
+	
 
 
 
 
+	T* operator[](int index) {
+		throw new NDArrayException("Not Implemented yet");
+		CheckIndex(index);
+		return data[index];
+	}
+
+	T* operator[](std::vector<int> index) {
+		return this[GetLinearIndex(index)];
+	}
+
+
+
+
+	NDArray<T>* operator= (NDArray<T> target) {
+
+		delete[] data;
+		size.clear();
+		for (int i = 0; i < target.size.size(); i++)
+		{
+			size.push_back(target.size[i]);
+		}
+		
+		data = (T*)malloc(sizeof(T) * GetFullSize());
+
+		for (int i = 0; i < GetFullSize(); i++)
+		{
+			set(i,target.get(i));
+		}
+
+
+		return this;
+	}
 
 	NDArray<T>(const NDArray<T> *origin)
 	{
 		size = origin->size;
 		delete[] data;
-		data = origin->data;
+
+		for (int i = 0; i < GetFullSize(); i++)
+		{
+			set(i,origin->data[i]);
+		}
 	}
 
-	static NDArray<T>* one(std::vector<int> temper) {
-		
-		NDArray<T> temp = new NDArray<T>(temper);
-		for (int i = 0; i < temp.GetFullSize(); i++)
+
+
+// fill functions
+
+
+	void fill(T value) {
+
+		for (int i = 0; i < GetFullSize(); i++)
 		{
-			temp.set(i, 1);
+			set(i, value);
 		}
 
-
-		return &temp;
 	}
 
+	static NDArray<T> one(std::vector<int> temper) {
+		
+		NDArray<T> temp = new NDArray<T>(temper);
+		temp.fill(1);
+		return temp;
+	}
 
-
-
-	static NDArray<T>* one(int n, ...) {
+	static NDArray<T> one(int n, ...) {
 		std::vector<int> temper;
 		va_list factor;
 		va_start(factor, n);
@@ -172,17 +259,119 @@ public:
 		}
 		va_end(factor);
 
-	
 		NDArray<T> temp = new NDArray<T>(temper);
-		for (int i = 0; i <temp.GetFullSize() ; i++)
-		{
-			temp.data[i] = 1;
-		}
+		temp.fill(1);
+
+		return temp;
+	}
+
+	static NDArray<T> zero(std::vector<int> temper) {
+
+		NDArray<T> temp = new NDArray<T>(temper);
+		temp.fill(0);
 
 
 		return temp;
 	}
 
+	static NDArray<T> zero(int n, ...) {
+		std::vector<int> temper;
+		va_list factor;
+		va_start(factor, n);
+		for (int i = 0; i < n; i++)
+		{
+			temper.push_back(va_arg(factor, int));
+		}
+		va_end(factor);
 
+		NDArray<T> temp = new NDArray<T>(temper);
+		temp.fill(0);
+		return temp;
+	}
+
+
+
+
+
+	static NDArray<T> rand(std::vector<int> temper) {
+
+		std::srand(std::time(nullptr));
+
+
+		NDArray<T> temp = new NDArray<T>(temper);
+		for (int i = 0; i < temp.GetFullSize(); i++)
+		{
+			temp.set(i, (T)std::rand());
+		}
+		return temp;
+	}
+
+	static NDArray<T> rand(int n, ...) {
+
+		std::srand(std::time(nullptr));
+
+
+		std::vector<int> temper;
+		va_list factor;
+		va_start(factor, n);
+		for (int i = 0; i < n; i++)
+		{
+			temper.push_back(va_arg(factor, int));
+		}
+		va_end(factor);
+
+		NDArray<T> temp = new NDArray<T>(temper);
+		for (int i = 0; i < temp.GetFullSize(); i++)
+		{
+			temp.set(i,(T) std::rand());
+		}
+
+		return temp;
+	}
+
+
+	// math functions
+
+
+	NDArray<T> operator+ (NDArray<T> b) {
+
+		NDArray<T> test = NDArray<T>::math(this, b,
+			[](T a, T b)
+			{
+				return a + b;
+			});
+
+			return test;
+	}
+	NDArray<T> operator- (NDArray<T> b) {
+
+		NDArray<T> test = NDArray<T>::math(this, b,
+			[](T a, T b)
+			{
+				return a - b;
+			});
+			
+			return test;
+	}
+	NDArray<T> operator* (NDArray<T> b) {
+
+		NDArray<T> test = NDArray<T>::math(this, b,
+			[](T a, T b)
+			{
+				return a * b;
+			});
+
+			return test;
+	}
+	NDArray<T> operator/ (NDArray<T> b) {
+
+		NDArray<T> test = NDArray<T>::math(this, b,
+			[](T a, T b)
+			{
+				return a / b;
+			});
+
+			return test;
+	}
 };
 
