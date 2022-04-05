@@ -77,6 +77,15 @@ private:
 		return true;
 	}
 	bool CheckIndex(std::vector<int> index) {
+
+		if (index.size() != size.size()) throw new NDArrayException("Wrong dimensional");
+
+		for (int i = 0; i < index.size(); i++)
+		{
+			if (size.size[i] != index.size[i]) throw  NDArrayException("index shape doesn't match");
+		}
+
+
 		return CheckIndex(GetLinearIndex(index));
 	}
 	
@@ -119,7 +128,7 @@ private:
 
 	}
 
-
+	
 
 
 
@@ -184,14 +193,15 @@ public:
 
 
 
-	T* operator[](int index) {
-		throw new NDArrayException("Not Implemented yet");
+	T& operator[](int index) {
+		//throw new NDArrayException("Not Implemented yet");
 		CheckIndex(index);
 		return data[index];
 	}
 
-	T* operator[](std::vector<int> index) {
-		return this[GetLinearIndex(index)];
+	T& operator[](std::vector<int> index) {
+		CheckIndex(index);
+		return data[GetLinearIndex(index)];
 	}
 
 
@@ -378,5 +388,54 @@ public:
 
 			return test;
 	}
+
+
+	NDArray<T> MatrixMultiply(NDArray<T> b) {
+		NDArray<T> a = *this;
+
+		if (a.size.size() != 2 || b.size.size() != 2) throw new NDArrayException("Matrix must have only two dime");
+
+		if (a.size[1] - b.size[0] !=0) throw new NDArrayException("Matrix must have same size by one side!");
+
+		NDArray<T> result = NDArray<T>::one(2,a.size[0], b.size[1]);
+
+		for (int ry = 0; ry < result.size[0]; ry++)
+		{
+			for (int rx = 0; rx < result.size[1]; rx++)
+			{
+				std::vector<int> index;
+				index.push_back(ry);
+				index.push_back(rx);
+
+
+
+				T temp = 0;
+				for (int i = 0; i < a.size[1]; i++)
+				{
+					std::vector<int> indexa;
+					indexa.push_back(ry);
+					indexa.push_back(i);
+					std::vector<int> indexb;
+					indexb.push_back(i);
+					indexb.push_back(rx);
+
+					temp += a.get(indexa) * b.get(indexb);
+				}
+
+				result.set(GetLinearIndex(index), temp);
+
+			}
+
+		}
+
+		return result;
+
+	}
+
+
+
+
+
+
 };
 

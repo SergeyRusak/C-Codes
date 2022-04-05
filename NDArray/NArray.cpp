@@ -15,11 +15,11 @@ int main()
     std::cout << test.get(0);
     NDArray<int> test2(3, 2, 2, 2);
     test2.set(0, 2);
-    NDArray<int>test21(NDArray<int>::one(3,2,2,2));
-    NDArray<int>test22 = NDArray<int>::one(3, 2, 2, 2);
-    std::cout << test2.get(0);
-    NDArray<int>test3 = (test21 + test22 + test21) / (test22 + test21) ;
-    std::cout << test3.get(2);
+    NDArray<int>test21(NDArray<int>::one(2,2,2));
+    NDArray<int>test22 = NDArray<int>::rand(2,2,2);
+    std::cout << test22.get(0) << std::endl;
+    NDArray<int>test3 = test22.MatrixMultiply(test21);
+    std::cout << test3[0];
 
 }
 
