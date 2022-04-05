@@ -8,10 +8,19 @@ int main()
 
     std::vector<int> testsize;
     testsize.push_back(2);
-    testsize.push_back(3);
+    testsize.push_back(2);
+
     NDArray<int> test(testsize);
-    test.set(3, 1);
-    std::cout << test.get(3);
+    test.set(0, 1);
+    std::cout << test.get(0);
+    NDArray<int> test2(3, 2, 2, 2);
+    test2.set(0, 2);
+    NDArray<int>test21(NDArray<int>::one(3,2,2,2));
+    NDArray<int>test22 = NDArray<int>::one(3, 2, 2, 2);
+    std::cout << test2.get(0);
+    NDArray<int>test3 = (test21 + test22 + test21) / (test22 + test21) ;
+    std::cout << test3.get(2);
+
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

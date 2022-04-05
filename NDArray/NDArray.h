@@ -217,14 +217,19 @@ public:
 		return this;
 	}
 
-	NDArray<T>(const NDArray<T> *origin)
+	NDArray<T>(NDArray<T> *target)
 	{
-		size = origin->size;
-		delete[] data;
+		size = std::vector<int>();
+		for (int i = 0; i < target->size.size(); i++)
+		{
+			size.push_back(target->size[i]);
+		}
+
+		data = (T*)malloc(sizeof(T) * GetFullSize());
 
 		for (int i = 0; i < GetFullSize(); i++)
 		{
-			set(i,origin->data[i]);
+			set(i, target->get(i));
 		}
 	}
 
