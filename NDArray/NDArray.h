@@ -82,7 +82,7 @@ private:
 
 		for (int i = 0; i < index.size(); i++)
 		{
-			if (size.size[i] != index.size[i]) throw  NDArrayException("index shape doesn't match");
+			if (size[i] != index[i]) throw  NDArrayException("index shape doesn't match");
 		}
 
 
