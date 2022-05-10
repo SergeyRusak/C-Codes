@@ -1,2 +1,2 @@
 run:
-    python  HashFindDublicate.py ./files
+	python3  HashFindDublicate.py ./files
