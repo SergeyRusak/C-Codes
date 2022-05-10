@@ -1,6 +1,8 @@
 import re
 import os
+import sys
 import time
+import random
 
 def CRC(chars):
     h = 0
@@ -22,6 +24,16 @@ def PJW(chars):
             h = h ^ g
     return h
 
+def generate_R():
+    R = []
+    for i in range(0,128):
+        k = random.randint(0,127)
+        while k in R:
+            k = random.randint(0, 127)
+        R.append(k)
+    return R
+
+R = generate_R()
 
 def BUZ(chars):
     h = 0
@@ -29,7 +41,8 @@ def BUZ(chars):
         highorder = h & 0x80000000
         h = h << 1
         h = h ^ (highorder >> 31)
-        h = h ^ 0  # TODO: RAND
+        h = h ^ R[ord(char)]
+    return h
 
 
 def prepare(text):
@@ -45,7 +58,7 @@ def check_dublicate(files_list, hash_func):
             hashes.append(hash_func(tex))
     hashes.sort()
     for i in range(len(hashes) - 1):
-        if hashes[i] == hashes[i + 1] == 0:
+        if hashes[i] == hashes[i + 1]:
             count += 1
     return count
 
@@ -69,13 +82,17 @@ def timetest(files, func):
 
 if __name__ == "__main__":
 
+
+
     hash1 = CRC
     hash2 = PJW
-    hash3 = hash
+    hash3 = BUZ
+    hash4 = hash
 
-    files = find_files(".")
+    files = find_files(sys.argv[1])
 
     timetest(files, hash1)
     timetest(files, hash2)
     timetest(files, hash3)
+    timetest(files, hash4)
 
