@@ -1,4 +1,4 @@
-﻿#include "NDArray.h"
+#include "NDArray.h"
 #include <iostream>
 
 int main()
@@ -10,7 +10,14 @@ int main()
 
     NDArray<int> test(testsize);
     test.set(0, 1);
-    std::cout << test.get(0)<<std::endl;
+    test.set(1, 2);
+    test.set(2, 3);
+    test.set(3, 4);
+
+    std::cout << test.get(1)<<std::endl;
+    std::cout << test.MatrixTransp().get(1) << std::endl;
+    
+    
     NDArray<int> test2(3, 2, 2, 2);
     test2.set(0, 2);
     NDArray<int>test21(NDArray<int>::one(2,2,2));
