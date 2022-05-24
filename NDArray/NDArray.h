@@ -431,6 +431,36 @@ public:
 		return result;
 
 	}
+	
+	NDArray<T> MatrixTransp() {
+		NDArray<T> a = *this;
+
+		if (a.size.size() != 2) throw new NDArrayException("Matrix must have only two dime");
+
+
+		NDArray<T> result = NDArray<T>::one(2, a.size[0], a.size[1]);
+
+		for (int ry = 0; ry < result.size[0]; ry++)
+		{
+			for (int rx = 0; rx < result.size[1]; rx++)
+			{
+				std::vector<int> indexold;
+				indexold.push_back(rx);
+				indexold.push_back(ry);
+				std::vector<int> indexnew;
+				indexnew.push_back(ry);
+				indexnew.push_back(rx);
+				
+
+				result.set(GetLinearIndex(indexnew), a.get(indexold));
+
+			}
+
+		}
+
+		return result;
+
+	}
 
 
 
