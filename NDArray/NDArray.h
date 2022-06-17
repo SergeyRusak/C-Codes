@@ -438,7 +438,7 @@ public:
 		if (a.size.size() != 2) throw new NDArrayException("Matrix must have only two dime");
 
 
-		NDArray<T> result = NDArray<T>::one(2, a.size[0], a.size[1]);
+		NDArray<T> result = NDArray<T>::one(2, a.size[1], a.size[0]);
 
 		for (int ry = 0; ry < result.size[0]; ry++)
 		{
@@ -452,7 +452,7 @@ public:
 				indexnew.push_back(rx);
 				
 
-				result.set(GetLinearIndex(indexnew), a.get(indexold));
+				result.set(result.GetLinearIndex(indexnew), a.get(indexold));
 
 			}
 
